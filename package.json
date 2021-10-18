@@ -1,0 +1,23 @@
+{
+  "name": "baterponto_",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "run tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thiagomsantanna/BaterPonto_.git"
+  },
+  "author": "thiagomsantanna",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thiagomsantanna/BaterPonto_/issues"
+  },
+  "homepage": "https://github.com/thiagomsantanna/BaterPonto_#readme",
+  "dependencies": {
+    "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0"
+  }
+}

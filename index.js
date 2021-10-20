@@ -17,11 +17,28 @@ client.on('messageCreate', async mensagem => {
     switch (mensagem.content) {
 
         case '/almoco':
-            let _msgPontoParaColocarAlmoco = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+            //messages.reverse();
+            let _msgsDoUser_almoco = messages.filter(fm => fm.interaction.user.id === mensagem.author.id);
+            _msgsDoUser_almoco.reverse();
+            //let _msgPontoParaColocarAlmoco = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+            let _msgPontoParaColocarAlmoco = _msgsDoUser_almoco.find(last => last.interaction.user.id === mensagem.author.id);
 
             if (_msgPontoParaColocarAlmoco) {
-                _msg = await _msgPontoParaColocarAlmoco.pontoMessage.edit({ content: `${_msgPontoParaColocarAlmoco.pontoMessage.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
-                messages.push(_msg)
+
+                //_msg = await _msgPontoParaColocarAlmoco.pontoMessage.edit({ content: `${_msgPontoParaColocarAlmoco.pontoMessage.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
+                await _msgPontoParaColocarAlmoco.pontoMessage.edit({ content: `${_msgPontoParaColocarAlmoco.pontoMessage.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
+                //console.log(_msg);
+                console.log('------------------');
+                console.log(_msgPontoParaColocarAlmoco);
+                //messages.push(_msg)
+                console.log('------------------');
+                console.log(messages);
+                // try {
+                //     _msg = await _msgPontoParaColocarAlmoco.pontoMessage.edit({ content: `${_msgPontoParaColocarAlmoco.pontoMessage.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
+                //     messages.push(_msg)
+                // } catch (error) {
+                //     console.error();
+                // }
             }
             else{
                 mensagem.channel.send('Vai pro almoço direto?')
@@ -30,18 +47,23 @@ client.on('messageCreate', async mensagem => {
             
             mensagem.delete();
 
-            console.log(_msg.id);
+            console.log(_msgPontoParaColocarAlmoco.pontoMessage.id);
 
             break;
         case '/voltei':
             
-            let _msgPontoParaColocarRetorno = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+            //let _msgPontoParaColocarRetorno = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+            let _msgsDoUser_voltei = messages.filter(fm => fm.interaction.user.id === mensagem.author.id);
+            _msgsDoUser_voltei.reverse();
+            //let _msgPontoParaColocarAlmoco = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+            let _msgPontoParaColocarRetorno = _msgsDoUser_voltei.find(last => last.interaction.user.id === mensagem.author.id);
 
             if (_msgPontoParaColocarRetorno) {
-                _msg = await _msgPontoParaColocarRetorno.pontoMessage.edit({ content: `${_msgPontoParaColocarRetorno.pontoMessage.content}\n${todaysDay} - ${now} Retorno`, fetchReply: true });
-                messages.push(_msg)
+                //_msg = await _msgPontoParaColocarRetorno.pontoMessage.edit({ content: `${_msgPontoParaColocarRetorno.pontoMessage.content}\n${todaysDay} - ${now} Retorno`, fetchReply: true });
+                await _msgPontoParaColocarRetorno.pontoMessage.edit({ content: `${_msgPontoParaColocarRetorno.pontoMessage.content}\n${todaysDay} - ${now} Retorno`, fetchReply: true });
+                //messages.push(_msg)
 
-                mensagem.delete();
+                
             }
             else{
                 mensagem.channel.send('Voltou da onde? Nem almoçou direito meu fi, calmai que vovó vai fazer um bolinho pra vc viu')
@@ -49,18 +71,23 @@ client.on('messageCreate', async mensagem => {
                 break;
             }
 
-            console.log(_msg.id);
+            mensagem.delete();
+
+            console.log(_msgPontoParaColocarRetorno.pontoMessage.id);
 
             break;
         case '/tchau':
 
-            let _msgPontoParaColocarSaida = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+            //let _msgPontoParaColocarSaida = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+            let _msgsDoUser = messages.filter(fm => fm.interaction.user.id === mensagem.author.id);
+            _msgsDoUser.reverse();
+            //let _msgPontoParaColocarAlmoco = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+            let _msgPontoParaColocarSaida = _msgsDoUser.find(last => last.interaction.user.id === mensagem.author.id);
 
             if (_msgPontoParaColocarSaida) {
-                _msg = await _msgPontoParaColocarSaida.pontoMessage.edit({ content: `${_msgPontoParaColocarSaida.pontoMessage.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
-                messages.push(_msg)
-
-                mensagem.delete();
+                //_msg = await _msgPontoParaColocarSaida.pontoMessage.edit({ content: `${_msgPontoParaColocarSaida.pontoMessage.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
+                await _msgPontoParaColocarSaida.pontoMessage.edit({ content: `${_msgPontoParaColocarSaida.pontoMessage.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
+                //messages.push(_msg)
             }
             else{
                 mensagem.channel.send('Nem chegou e já ta saindo fora?')
@@ -68,7 +95,7 @@ client.on('messageCreate', async mensagem => {
                 break;
             }
 
-
+            mensagem.delete();
             // if (messages.length === 0) {
             //     mensagem.channel.send('Nem chegou e já ta saindo fora?')
             //     console.log(mensagem);
@@ -79,7 +106,7 @@ client.on('messageCreate', async mensagem => {
             // messages = await messages.edit({ content: `${messages.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
             // mensagem.delete();
 
-            console.log(_msg.id)
+            console.log(_msgPontoParaColocarSaida.pontoMessage.id)
 
             break;
     }

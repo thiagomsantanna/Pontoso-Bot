@@ -12,7 +12,8 @@ client.once('ready', () => {
 client.on('messageCreate', async mensagem => {
 
     var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
-    var now = `${new Date().getHours()}:${new Date().getMinutes()}`
+    var minutes = new Date().getMinutes();
+    var now = `${new Date().getHours()}:${minutes < 9 ? `0${minutes}` : minutes}`
 
     switch (mensagem.content) {
 

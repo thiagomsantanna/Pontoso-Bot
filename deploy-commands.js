@@ -4,9 +4,10 @@ const { Routes } = require('discord-api-types/v9');
 const result = require('dotenv').config({ path: '.env' })
 
 const commands = [
-	new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
-	new SlashCommandBuilder().setName('server').setDescription('Replies with server info!'),
-	new SlashCommandBuilder().setName('user').setDescription('Replies with user info!'),
+	new SlashCommandBuilder().setName('ponto').setDescription('Marca o horário de Início de trabalho.')//,
+	// new SlashCommandBuilder().setName('almoco').setDescription('Marca o horário de Almoço.'),
+	// new SlashCommandBuilder().setName('voltei').setDescription('Marca o horário de volta ao trabalho.'),
+	// new SlashCommandBuilder().setName('tchau').setDescription('Marca o horário de saída')
 ]
 	.map(command => command.toJSON());
 

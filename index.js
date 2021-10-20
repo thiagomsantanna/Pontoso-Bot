@@ -2,106 +2,117 @@ const { Client, Intents, CommandInteractionOptionResolver } = require('discord.j
 const result = require('dotenv').config({ path: '.env' })
 
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"] });
+var messages = [];
 // intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"]
 // intents: [Intents.FLAGS.GUILDS]
 client.once('ready', () => {
-  console.log('Ready!');
+    console.log('Ready!');
 });
 
 client.on('messageCreate', async mensagem => {
 
-  var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
-  var now = `${new Date().getHours()}:${new Date().getMinutes()}`
-  const canalId = '898614312933920790';
+    var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
+    var now = `${new Date().getHours()}:${new Date().getMinutes()}`
 
-  switch (mensagem.content) {
-    case '!cheguei':
-      pontoMsg = await mensagem.reply({ content: `>>> ${todaysDay} - ${now} Início`, fetchReply: true });
-      //message = await interaction.reply('dale').fetchReply();
-      //console.log(interaction);
-      console.log(pontoMsg.id);
-      console.log(mensagem)
-      console.log('\n')
-      console.log(pontoMsg)
+    switch (mensagem.content) {
 
-      break;
-    case '!almoco':
-      //interaction.fetchReply()
-      // message = 
-      //await interaction.reply(`${interaction.user.username} toma aqui essa coquinha gelada pra ti`)
-      //canalId.send('sifoda').then(message => console.log(message));
-      pontoMsg = await pontoMsg.edit({ content: `${pontoMsg.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
-      //message = await message.edit({ content: `${message.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
-      console.log(pontoMsg.id);
+        case '/almoco':
+            let _msgPontoParaColocarAlmoco = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
 
-      break;
-    case '!voltei':
-      //await interaction.reply(`User info.\n ${interaction.user.avatar}\n\n\n ${interaction.user.avatarURL({})}`);
-      //await interaction.reply(`${interaction.user.username} tá de buxin chei?`)
-      pontoMsg = await pontoMsg.edit({ content: `${pontoMsg.content}\n${todaysDay} - ${now} Retorno`, fetchReply: true });
-      //await interaction.fetchMessage(message).then(message => console.log(`${message}`));
-      console.log(pontoMsg.id);
+            if (_msgPontoParaColocarAlmoco) {
+                _msg = await _msgPontoParaColocarAlmoco.pontoMessage.edit({ content: `${_msgPontoParaColocarAlmoco.pontoMessage.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
+                messages.push(_msg)
+            }
+            else{
+                mensagem.channel.send('Vai pro almoço direto?')
+                break;
+            }
+            
+            mensagem.delete();
 
-      break;
-    case '!tchau':
-      pontoMsg = await pontoMsg.edit({ content: `${pontoMsg.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
-      console.log(pontoMsg.id)
+            console.log(_msg.id);
 
-      break;
-  }
+            break;
+        case '/voltei':
+            
+            let _msgPontoParaColocarRetorno = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
 
-  //msg.react('👍');
-  //msg.react('👎');
-  //msg.react('😎');
+            if (_msgPontoParaColocarRetorno) {
+                _msg = await _msgPontoParaColocarRetorno.pontoMessage.edit({ content: `${_msgPontoParaColocarRetorno.pontoMessage.content}\n${todaysDay} - ${now} Retorno`, fetchReply: true });
+                messages.push(_msg)
 
-  //console.log(filter);
+                mensagem.delete();
+            }
+            else{
+                mensagem.channel.send('Voltou da onde? Nem almoçou direito meu fi, calmai que vovó vai fazer um bolinho pra vc viu')
 
-  //console.log(mensagem);
+                break;
+            }
+
+            console.log(_msg.id);
+
+            break;
+        case '/tchau':
+
+            let _msgPontoParaColocarSaida = messages.find(fm => fm.interaction.user.id === mensagem.author.id);
+
+            if (_msgPontoParaColocarSaida) {
+                _msg = await _msgPontoParaColocarSaida.pontoMessage.edit({ content: `${_msgPontoParaColocarSaida.pontoMessage.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
+                messages.push(_msg)
+
+                mensagem.delete();
+            }
+            else{
+                mensagem.channel.send('Nem chegou e já ta saindo fora?')
+                mensagem.author.send('https://www.youtube.com/watch?v=6qkVt3AywOk');
+                break;
+            }
+
+
+            // if (messages.length === 0) {
+            //     mensagem.channel.send('Nem chegou e já ta saindo fora?')
+            //     console.log(mensagem);
+            //     mensagem.author.send('https://www.youtube.com/watch?v=6qkVt3AywOk');
+            //     break;
+            // }
+
+            // messages = await messages.edit({ content: `${messages.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
+            // mensagem.delete();
+
+            console.log(_msg.id)
+
+            break;
+    }
 });
 
-// client.on('interactionCreate', async interaction => {
+client.on('interactionCreate', async interaction => {
 
-//   if (!interaction.isCommand()) return;
+    if (!interaction.isCommand()) return;
 
-//   const { commandName } = interaction;
+    const { commandName } = interaction;
 
-//   var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
-//   var now = `${new Date().getHours()}:${new Date().getMinutes()}`
-//   const canalId = '898614312933920790';
+    var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
+    var minutes = new Date().getMinutes();
+    var now = `${new Date().getHours()}:${minutes < 9 ? `0${minutes}` : minutes}`
 
-//   switch (commandName) {
-//     case 'cheguei':
-//       message = await interaction.reply({ content: `>>> ${todaysDay} - ${now} Início`, fetchReply: true });
-//       //message = await interaction.reply('dale').fetchReply();
-//       //console.log(interaction);
-//       console.log(message.id);
+    function numeroAleatorio(max, min = 0) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    var emojis = ['👺', '🤠', '🥳', '👻', '💩', '🐵', '🐲', '🦄', '🦧', '🐟', '🐉', '🐀', '🦥', '🦜', '🦚', '🤺', '🦆', '😎', '😙', '😚', '🥵', '😱', '🍒', '🍑', '🍌', '🌹', '🥀', '🛺', '🛹', '🦼', '🏎', '🪂', '🚀', '💞', '💕', '☯', '🛐', '㊗', '🉐', '🎑', '🎁', '🎀', '🎢', '🎭', '☎', '🔫', '🏹', '💸', '🗑', '🧬', '🛠', '🔐', '🔏', '🎷', '🎮', '🥊', '🎯', '🏆', '🧩', '🧸'];
 
-//       break;
-//     case 'almoco':
-//       //interaction.fetchReply()
-//       // message = 
-//       //await interaction.reply(`${interaction.user.username} toma aqui essa coquinha gelada pra ti`)
-//       canalId.send('sifoda').then(message => console.log(message));
-//       // message = await interaction.editReply({content: `${message.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true});
-//       //message = await message.edit({ content: `${message.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
-//       //console.log(message.id);
+    if (commandName === 'ponto') {
 
-//       break;
-//     case 'voltei':
-//       //await interaction.reply(`User info.\n ${interaction.user.avatar}\n\n\n ${interaction.user.avatarURL({})}`);
-//       //await interaction.reply(`${interaction.user.username} tá de buxin chei?`)
-//       await interaction.isCommand;
-//       message = await message.edit({content: `${message.content}\n${todaysDay} - ${now} Retorno`, fetchReply: true});
-//       //await interaction.fetchMessage(message).then(message => console.log(`${message}`));
-//       //console.log(message.id);
+        pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${todaysDay} - ${now} Início`, fetchReply: true });
+        //interaction.channel.send('fala willian!');
+        let _firstUserMsg = [{interaction, pontoMessage}]
+        ;
 
-//       break;
-//     case 'tchau':
-//       message = await message.edit({ content: `${message.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
-//       console.log(message.id)
+        messages.push(Object.assign( ..._firstUserMsg));
 
-//       break;
-//   }
-// });
+        pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
+
+        console.log(pontoMessage.id);
+    }
+});
 
 client.login(process.env.BOT_TOKEN);

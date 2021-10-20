@@ -1,6 +1,9 @@
 # Enviroment variables
 .env
 
+# test
+indexTralha.js
+
 # Logs
 logs
 *.log

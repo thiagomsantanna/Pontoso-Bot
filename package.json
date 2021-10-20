@@ -12,6 +12,9 @@
   },
   "author": "thiagomsantanna",
   "license": "ISC",
+  "engines": {
+    "node": "8.7.0"
+  },
   "bugs": {
     "url": "https://github.com/thiagomsantanna/BaterPonto_/issues"
   },

@@ -1,7 +1,10 @@
 const { Client, Intents, CommandInteractionOptionResolver } = require('discord.js');
 const result = require('dotenv').config({ path: '.env' })
-
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"] });
+
+const clima = require('./pegaClima');
+
+
 var messages = [];
 // intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"]
 // intents: [Intents.FLAGS.GUILDS]
@@ -117,25 +120,39 @@ client.on('interactionCreate', async interaction => {
     var minutes = new Date().getMinutes();
     var now = `${new Date().getHours()}:${minutes < 9 ? `0${minutes}` : minutes}`
 
-    function numeroAleatorio(max, min = 0) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-    var emojis = ['👺', '🤠', '🥳', '👻', '💩', '🐵', '🐲', '🦄', '🦧', '🐟', '🐉', '🐀', '🦥', '🦜', '🦚', '🤺', '🦆', '😎', '😙', '😚', '🥵', '😱', '🍒', '🍑', '🍌', '🌹', '🥀', '🛺', '🛹', '🦼', '🏎', '🪂', '🚀', '💞', '💕', '☯', '🛐', '㊗', '🉐', '🎑', '🎁', '🎀', '🎢', '🎭', '☎', '🔫', '🏹', '💸', '🗑', '🧬', '🛠', '🔐', '🔏', '🎷', '🎮', '🥊', '🎯', '🏆', '🧩', '🧸'];
+    // function numeroAleatorio(max, min = 0) {
+    //     return Math.floor(Math.random() * (max - min + 1) + min);
+    // }
+    //var emojis = ['👺', '🤠', '🥳', '👻', '💩', '🐵', '🐲', '🦄', '🦧', '🐟', '🐉', '🐀', '🦥', '🦜', '🦚', '🤺', '🦆', '😎', '😙', '😚', '🥵', '😱', '🍒', '🍑', '🍌', '🌹', '🥀', '🛺', '🛹', '🦼', '🏎', '🪂', '🚀', '💞', '💕', '☯', '🛐', '㊗', '🉐', '🎑', '🎁', '🎀', '🎢', '🎭', '☎', '🔫', '🏹', '💸', '🗑', '🧬', '🛠', '🔐', '🔏', '🎷', '🎮', '🥊', '🎯', '🏆', '🧩', '🧸'];
 
     if (commandName === 'ponto') {
 
         pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${todaysDay} - ${now} Início`, fetchReply: true });
 
-        let _firstUserMsg = [{ interaction, pontoMessage }]
-            ;
+        let _firstUserMsg = [{ interaction, pontoMessage }];
 
         messages.push(Object.assign(..._firstUserMsg));
 
-        pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
-        pontoMessage.react('☀');
+        //pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
+        var climaHoje = await clima.pegaClimaRioPreto();
+        pontoMessage.react(climaHoje);
 
         console.log(pontoMessage.id);
     }
+
+    if (commandName == 'esquecipapa') {
+
+        var almocoDoCara = interaction.options.getString('horario');
+
+        if (almocoDoCara.includes(':')) {
+            await interaction.reply({ content: 'êêêê.. oreiudo memo hein!', ephemeral: true});
+            pontoMessage.edit({ content: `${pontoMessage.content}\n${todaysDay} - ${almocoDoCara} Intervalo`, fetchReply: true })
+        }else{
+            await interaction.reply({ content: 'O modelo de horas utilizado é => **00:00**\n Te manca oreião', ephemeral: true});
+        }
+
+    }
+
 });
 
 client.login(process.env.BOT_TOKEN);

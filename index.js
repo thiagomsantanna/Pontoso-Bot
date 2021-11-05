@@ -17,7 +17,7 @@ client.on('messageCreate', async mensagem => {
     var diaTodo = new Date().setHours(0, 0, 0, 0);
     var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
     var minutes = new Date().getMinutes();
-    var now = `${new Date().getHours()}:${minutes < 9 ? `0${minutes}` : minutes}`
+    var now = `${new Date().getHours()}:${minutes <= 9 ? `0${minutes}` : minutes}`;
 
     switch (mensagem.content) {
 
@@ -237,5 +237,5 @@ client.on('interactionCreate', async interaction => {
     }
 
 });
-
+//Oceanic next
 client.login(process.env.BOT_TOKEN);

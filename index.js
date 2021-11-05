@@ -3,6 +3,7 @@ const result = require('dotenv').config({ path: '.env' })
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"] });
 
 const clima = require('./pegaClima');
+const redis = require('./redis');
 
 
 var messages = [];
@@ -167,6 +168,7 @@ client.on('interactionCreate', async interaction => {
                 // _interacoes.push(Object.assign(..._firstUserMsg));
                 _interacoes.push(_interacao);
                 messages.push(Object.assign(..._firstUserMsg));
+                redis.salvaMessage('daledaledaleputaqpariu');//Object.assign(..._firstUserMsg)
         
                 //pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
                 var climaHoje = await clima.pegaClimaRioPreto();
@@ -179,15 +181,31 @@ client.on('interactionCreate', async interaction => {
         } else {
 
             pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${todaysDay} - ${now} Início`, fetchReply: true });
-        
+            
+            //console.log(interaction);
+            //console.log('\n\n')
+            //console.log(pontoMessage);
+
             let _firstUserMsg = [{ interaction, pontoMessage }];
             // _interacoes.push(Object.assign(..._firstUserMsg));
             _interacoes.push(_interacao);
             messages.push(Object.assign(..._firstUserMsg));
-    
+            //let testRedisJson = Object.assign(..._firstUserMsg);
+            //let messageRedisJson = JSON.stringify({interaction, pontoMessage});
+            
+            //console.log(messageRedisJson);
+            redis.salvaMessage(pontoMessage, interaction);
+
+            let test = await redis.getChave();
+            // console.log('**************************')
+            // console.log(test);
+            interaction.channel.send(`\`\`\`json\n\n ${test}\`\`\``)
+            
+
             //pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
             var climaHoje = await clima.pegaClimaRioPreto();
             pontoMessage.react(climaHoje);
+            
     
             console.log(pontoMessage.id);
         }
@@ -223,17 +241,6 @@ client.on('interactionCreate', async interaction => {
         } else {
             await interaction.reply({ content: 'Vai pro almoço direto?', ephemeral: true});
         }
-
-
-        // var almocoDoCara = interaction.options.getString('horario');
-
-        // if (almocoDoCara.includes(':')) {
-        //     await interaction.reply({ content: 'êêêê.. oreiudo memo hein!', ephemeral: true});
-        //     pontoMessage.edit({ content: `${pontoMessage.content}\n${todaysDay} - ${almocoDoCara} Intervalo`, fetchReply: true })
-        // }else{
-        //     await interaction.reply({ content: 'O modelo de horas utilizado é => **00:00**\n Te manca oreião', ephemeral: true});
-        // }
-
     }
 
 });

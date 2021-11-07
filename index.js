@@ -237,5 +237,5 @@ client.on('interactionCreate', async interaction => {
     }
 
 });
-//Oceanic next
+
 client.login(process.env.BOT_TOKEN);

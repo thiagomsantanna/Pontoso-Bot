@@ -126,7 +126,7 @@ client.on('interactionCreate', async interaction => {
 
     var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
     var minutes = new Date().getMinutes();
-    var now = `${new Date().getHours()}:${minutes < 9 ? `0${minutes}` : minutes}`
+    var now = `${new Date().getHours()}:${minutes <= 9 ? `0${minutes}` : minutes}`
 
     // function numeroAleatorio(max, min = 0) {
     //     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -185,9 +185,7 @@ client.on('interactionCreate', async interaction => {
             _interacoes.push(_interacao);
             messages.push(Object.assign(..._firstUserMsg));
     
-            //pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
-            var climaHoje = await clima.pegaClimaRioPreto();
-            pontoMessage.react(climaHoje);
+            pontoMessage.react('⛅');
     
             console.log(pontoMessage.id);
         }

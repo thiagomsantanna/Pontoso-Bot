@@ -1,9 +1,9 @@
 const { Client, Intents, CommandInteractionOptionResolver } = require('discord.js');
 const result = require('dotenv').config({ path: '.env' })
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"] });
-
 const clima = require('./pegaClima');
-const redis = require('./redis');
+const dia = require('./pegaDataHora');
+const redis = require('./redisConnection');
 
 
 var messages = [];
@@ -19,7 +19,7 @@ client.on('messageCreate', async mensagem => {
     var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
     var minutes = new Date().getMinutes();
     var now = `${new Date().getHours()}:${minutes < 9 ? `0${minutes}` : minutes}`
-
+    
     switch (mensagem.content) {
 
         case '/almoco':
@@ -129,10 +129,7 @@ client.on('interactionCreate', async interaction => {
     var minutes = new Date().getMinutes();
     var now = `${new Date().getHours()}:${minutes < 9 ? `0${minutes}` : minutes}`
 
-    // function numeroAleatorio(max, min = 0) {
-    //     return Math.floor(Math.random() * (max - min + 1) + min);
-    // }
-    //var emojis = ['👺', '🤠', '🥳', '👻', '💩', '🐵', '🐲', '🦄', '🦧', '🐟', '🐉', '🐀', '🦥', '🦜', '🦚', '🤺', '🦆', '😎', '😙', '😚', '🥵', '😱', '🍒', '🍑', '🍌', '🌹', '🥀', '🛺', '🛹', '🦼', '🏎', '🪂', '🚀', '💞', '💕', '☯', '🛐', '㊗', '🉐', '🎑', '🎁', '🎀', '🎢', '🎭', '☎', '🔫', '🏹', '💸', '🗑', '🧬', '🛠', '🔐', '🔏', '🎷', '🎮', '🥊', '🎯', '🏆', '🧩', '🧸'];
+    var dataHora = dia.pegaDataHora();
 
     if (commandName === 'ponto') {
 
@@ -140,13 +137,12 @@ client.on('interactionCreate', async interaction => {
 
         var _interacao = { userID: interaction.user.id, horarioDia: interaction.createdTimestamp}
         console.log(_interacao);
-
+        
         let _interacoesDoUser = _interacoes.filter(tm => tm.userID === interaction.user.id)
         console.log(_interacoesDoUser);
         _interacoesDoUser.reverse();
 
         let _ultimoPontoBatidoPeloUsuario = _interacoesDoUser.find(last => last.userID === interaction.user.id);
-        
 
         if (_interacoesDoUser.length > 0) {
 
@@ -158,7 +154,7 @@ client.on('interactionCreate', async interaction => {
                 //interaction.reply({content: 'Bate o ponto ai cumade', ephemeral: true});
                 interaction.channel.send('bom te ver denovo');
 
-                pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${todaysDay} - ${now} Início`, fetchReply: true });
+                pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${dataHora} Início`, fetchReply: true });
                 
                 _interacao = {_interacao, pontoMessage};
                 console.log('*********************************')
@@ -170,9 +166,7 @@ client.on('interactionCreate', async interaction => {
                 messages.push(Object.assign(..._firstUserMsg));
                 redis.salvaMessage('daledaledaleputaqpariu');//Object.assign(..._firstUserMsg)
         
-                //pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
-                var climaHoje = await clima.pegaClimaRioPreto();
-                pontoMessage.react(climaHoje);
+                pontoMessage.react('☀');
         
                 console.log(pontoMessage.id);
             } else {
@@ -180,33 +174,19 @@ client.on('interactionCreate', async interaction => {
             }
         } else {
 
-            pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${todaysDay} - ${now} Início`, fetchReply: true });
-            
-            //console.log(interaction);
-            //console.log('\n\n')
-            //console.log(pontoMessage);
+            pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${dataHora} Início`, fetchReply: true });
 
             let _firstUserMsg = [{ interaction, pontoMessage }];
-            // _interacoes.push(Object.assign(..._firstUserMsg));
+
             _interacoes.push(_interacao);
             messages.push(Object.assign(..._firstUserMsg));
-            //let testRedisJson = Object.assign(..._firstUserMsg);
-            //let messageRedisJson = JSON.stringify({interaction, pontoMessage});
-            
-            //console.log(messageRedisJson);
-            redis.salvaMessage(pontoMessage, interaction);
 
-            let test = await redis.getChave();
-            // console.log('**************************')
-            // console.log(test);
-            interaction.channel.send(`\`\`\`json\n\n ${test}\`\`\``)
-            
+            //redis.salvaMessage(pontoMessage, interaction);
 
-            //pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
-            var climaHoje = await clima.pegaClimaRioPreto();
-            pontoMessage.react(climaHoje);
-            
-    
+            redis.salvaPonto(interaction.user.id, pontoMessage, interaction);
+
+            pontoMessage.react('☀');
+
             console.log(pontoMessage.id);
         }
  

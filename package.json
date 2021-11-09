@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "run tests",
+    "test": "jest",
     "start": "node ."
   },
   "repository": {
@@ -26,6 +26,7 @@
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.2.0",
     "dotenv": "^10.0.0",
+    "jest": "^27.3.1",
     "node-fetch": "^2.6.5"
   }
 }

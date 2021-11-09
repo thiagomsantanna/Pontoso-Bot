@@ -2,7 +2,7 @@ const { Client, Intents, CommandInteractionOptionResolver } = require('discord.j
 const result = require('dotenv').config({ path: '.env' })
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"] });
 
-const clima = require('./pegaClima');
+const dia = require('./pegaDataHora.js');
 
 
 var messages = [];
@@ -15,9 +15,7 @@ client.once('ready', () => {
 client.on('messageCreate', async mensagem => {
 
     var diaTodo = new Date().setHours(0, 0, 0, 0);
-    var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
-    var minutes = new Date().getMinutes();
-    var now = `${new Date().getHours()}:${minutes <= 9 ? `0${minutes}` : minutes}`;
+    var dataHora = dia.pegaDataHora();
 
     switch (mensagem.content) {
 
@@ -36,7 +34,7 @@ client.on('messageCreate', async mensagem => {
                     await mensagem.reply({ content: 'Esqueceu de bater o ponto hoje né, bonitão?', ephemeral: true});
                 }
                 else {
-                    await _msgPontoParaColocarAlmoco.pontoMessage.edit({ content: `${_msgPontoParaColocarAlmoco.pontoMessage.content}\n${todaysDay} - ${now} Intervalo`, fetchReply: true });
+                    await _msgPontoParaColocarAlmoco.pontoMessage.edit({ content: `${_msgPontoParaColocarAlmoco.pontoMessage.content}\n${dataHora} Intervalo`, fetchReply: true });
                     _msgPontoParaColocarAlmoco.pontoMessage.react('🍽');
 
                     await mensagem.delete();
@@ -66,7 +64,7 @@ client.on('messageCreate', async mensagem => {
                     await mensagem.reply({ content: 'Esqueceu de bater o ponto hoje né, bonitão?', ephemeral: true});
                 }
                 else {
-                    await _msgPontoParaColocarRetorno.pontoMessage.edit({ content: `${_msgPontoParaColocarRetorno.pontoMessage.content}\n${todaysDay} - ${now} Retorno`, fetchReply: true });
+                    await _msgPontoParaColocarRetorno.pontoMessage.edit({ content: `${_msgPontoParaColocarRetorno.pontoMessage.content}\n${dataHora} Retorno`, fetchReply: true });
                     _msgPontoParaColocarRetorno.pontoMessage.react('↩');
 
                     await mensagem.delete();
@@ -95,7 +93,7 @@ client.on('messageCreate', async mensagem => {
                     await mensagem.channel.send('Esqueceu de bater o ponto né, bonitão?')
                 }
                 else {
-                    await _msgPontoParaColocarSaida.pontoMessage.edit({ content: `${_msgPontoParaColocarSaida.pontoMessage.content}\n${todaysDay} - ${now} Saída`, fetchReply: true });
+                    await _msgPontoParaColocarSaida.pontoMessage.edit({ content: `${_msgPontoParaColocarSaida.pontoMessage.content}\n${dataHora} Saída`, fetchReply: true });
 
                     _msgPontoParaColocarSaida.pontoMessage.react('👋');
 
@@ -124,9 +122,7 @@ client.on('interactionCreate', async interaction => {
 
     const { commandName } = interaction;
 
-    var todaysDay = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
-    var minutes = new Date().getMinutes();
-    var now = `${new Date().getHours()}:${minutes <= 9 ? `0${minutes}` : minutes}`
+    var dataHora = dia.pegaDataHora();
 
     // function numeroAleatorio(max, min = 0) {
     //     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -157,7 +153,7 @@ client.on('interactionCreate', async interaction => {
                 //interaction.reply({content: 'Bate o ponto ai cumade', ephemeral: true});
                 interaction.channel.send('bom te ver denovo');
 
-                pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${todaysDay} - ${now} Início`, fetchReply: true });
+                pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${dataHora} Início`, fetchReply: true });
                 
                 _interacao = {_interacao, pontoMessage};
                 console.log('*********************************')
@@ -178,7 +174,7 @@ client.on('interactionCreate', async interaction => {
             }
         } else {
 
-            pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${todaysDay} - ${now} Início`, fetchReply: true });
+            pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${dataHora} Início`, fetchReply: true });
         
             let _firstUserMsg = [{ interaction, pontoMessage }];
             // _interacoes.push(Object.assign(..._firstUserMsg));
@@ -213,9 +209,9 @@ client.on('interactionCreate', async interaction => {
 
                 if (almocoDoCara.includes(':')) {
                     await interaction.reply({ content: 'êêêê.. oreiudo memo hein!', ephemeral: true});
-                    pontoMessage.edit({ content: `${pontoMessage.content}\n${todaysDay} - ${almocoDoCara} Intervalo`, fetchReply: true })
+                    pontoMessage.edit({ content: `${pontoMessage.content}\n${dia.pegaData()} - ${almocoDoCara} Intervalo`, fetchReply: true })
                 }else{
-                    await interaction.reply({ content: 'O modelo de horas utilizado é => **00:00**\n Te manca oreião', ephemeral: true});
+                    await interaction.reply({ content: 'O modelo de horas utilizado é => **00:00**', ephemeral: true});
                 }
             }
         } else {

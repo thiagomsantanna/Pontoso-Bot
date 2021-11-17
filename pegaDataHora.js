@@ -25,7 +25,7 @@ function pegaData(){
 
     let dataHoras = datasHorasAgora();
 
-    return `9999999999${dataHoras.diaHoje}/${dataHoras.mesHoje}/${dataHoras.anoHoje}`;
+    return `${dataHoras.diaHoje}/${dataHoras.mesHoje}/${dataHoras.anoHoje}`;
 }
 
 module.exports = {

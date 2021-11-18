@@ -1,9 +1,11 @@
 const { Client, Intents, CommandInteractionOptionResolver } = require('discord.js');
 const result = require('dotenv').config({ path: '.env' })
-const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"] });
+const client = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
+	partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+});
 
 const dia = require('./pegaDataHora.js');
-
 
 var messages = [];
 // intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"]
@@ -113,6 +115,71 @@ client.on('messageCreate', async mensagem => {
     }
 });
 
+client.on('messageReactionAdd', async (reaction, user) => {
+
+    console.log(reaction._emoji.name);
+    // console.log(reaction.count);
+    // console.log(reaction);
+    // 
+	// When a reaction is received, check if the structure is partial
+	if (reaction.partial) {
+		// If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
+		try {
+            console.log('dale');
+			await reaction.fetch();
+		} catch (error) {
+			console.error('Something went wrong when fetching the message:', error);
+			// Return as `reaction.message.author` may be undefined/null
+			return;
+		}
+	}
+
+	// // Now the message has been cached and is fully available
+	// console.log(`${reaction.message.author}'s message "${reaction.message.content}" gained a reaction!`);
+	// // The reaction is now also fully available and the properties will be reflected accurately:
+	// console.log(`${reaction.count} user(s) have given the same reaction to this message!`);
+
+    if (reaction.emoji.name === '🍽') {
+        if (reaction.count === 2) {
+
+            // embedPonto.description = `${embedPonto.description}\n${dia.pegaDataHora()} Intervalo`;
+            // await reaction.message.edit({ embeds: [embedPonto], fetchReply: true });
+            
+            if (reaction.message.content.includes('Intervalo')) { 
+                await reaction.message.react('🤬')
+                await reaction.message.reactions.cache.get('🤬').remove() 
+            } else { 
+                await reaction.message.edit({ content: `${reaction.message.content}\n${dia.pegaDataHora()} Intervalo`, fetchReply: true });
+            } 
+        }
+        
+    } else if (reaction.emoji.name === '↩') {
+        if (reaction.count === 2) {
+
+            if (reaction.message.content.includes('Retorno')) { 
+                await reaction.message.react('🤬')
+                await reaction.message.reactions.cache.get('🤬').remove() 
+            } else { 
+                await reaction.message.edit({ content: `${reaction.message.content}\n${dia.pegaDataHora()} Retorno`, fetchReply: true });
+            } 
+        }
+    } else if (reaction.emoji.name === '👋') {
+        if (reaction.count === 2) {
+
+            if (reaction.message.content.includes('Saída')) { 
+                await reaction.message.react('🤬')
+                await reaction.message.reactions.cache.get('🤬').remove() 
+            } else { 
+                await reaction.message.edit({ content: `${reaction.message.content}\n${dia.pegaDataHora()} Saída`, fetchReply: true });
+            } 
+            //await reaction.message.edit({ content: `${reaction.message.content}\n${dia.pegaDataHora()} Saída`, fetchReply: true });
+
+        }
+    }
+        
+});
+
+
 //variavel que salva a interaction timeStamp
 var _interacoes = [];//1634592789 //1635718484860
 //{ userID: '222090790627704832', horarioDia: 1635718484860 }
@@ -181,8 +248,38 @@ client.on('interactionCreate', async interaction => {
             _interacoes.push(_interacao);
             messages.push(Object.assign(..._firstUserMsg));
     
-            pontoMessage.react('⛅');
-    
+            await pontoMessage.react('⛅');
+            await pontoMessage.react('🍽');
+            await pontoMessage.react('↩');
+            await pontoMessage.react('👋');
+
+            // embedPonto = {
+            //     color: 0x0099ff,
+            //     //title: `Ponto - <@${interaction.user.id}>`,
+            //     author: {
+            //         name: `Ponto`,
+            //         icon_url: `${interaction.user.avatarURL()}`//,
+            //         //url: 'https://discord.js.org',
+            //     },
+            //     description: `${dia.pegaDataHora()} Início`,
+            //     // thumbnail: {
+            //     //     url: 'https://i.imgur.com/AfFp7pu.png',
+            //     // },
+            //     // image: {
+            //     //     url: 'https://i.imgur.com/AfFp7pu.png',
+            //     // },
+            //     timestamp: new Date()
+            // };
+
+            // interaction.
+            
+            // pontoMessage = await interaction.reply({ embeds: [embedPonto], fetchReply: true });
+            // await pontoMessage.edit(`<@${interaction.user.id}>\n`);
+
+            // await pontoMessage.react('⛅');
+            // await pontoMessage.react('🍽');
+            // await pontoMessage.react('↩');
+
             console.log(pontoMessage.id);
         }
  

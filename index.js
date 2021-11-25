@@ -1,8 +1,8 @@
 const { Client, Intents, CommandInteractionOptionResolver } = require('discord.js');
 const result = require('dotenv').config({ path: '.env' })
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
-	partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 });
 
 const dia = require('./pegaDataHora.js');
@@ -33,7 +33,7 @@ client.on('messageCreate', async mensagem => {
 
                 if (diaTodo > dataUltimaMsg) {
                     //await mensagem.channel.send('Esqueceu de bater o ponto hoje né, bonitão?');
-                    await mensagem.reply({ content: 'Esqueceu de bater o ponto hoje né, bonitão?', ephemeral: true});
+                    await mensagem.reply({ content: 'Esqueceu de bater o ponto hoje né, bonitão?', ephemeral: true });
                 }
                 else {
                     await _msgPontoParaColocarAlmoco.pontoMessage.edit({ content: `${_msgPontoParaColocarAlmoco.pontoMessage.content}\n${dataHora} Intervalo`, fetchReply: true });
@@ -46,7 +46,7 @@ client.on('messageCreate', async mensagem => {
             }
             else {
                 //await mensagem.channel.send('Vai pro almoço direto?')
-                await mensagem.reply({ content: 'Vai pro almoço direto?', ephemeral: true});
+                await mensagem.reply({ content: 'Vai pro almoço direto?', ephemeral: true });
                 break;
             }
 
@@ -63,7 +63,7 @@ client.on('messageCreate', async mensagem => {
 
                 if (diaTodo > dataUltimaMsg) {
                     //await mensagem.channel.send('Esqueceu de bater o ponto hoje né, bonitão?');
-                    await mensagem.reply({ content: 'Esqueceu de bater o ponto hoje né, bonitão?', ephemeral: true});
+                    await mensagem.reply({ content: 'Esqueceu de bater o ponto hoje né, bonitão?', ephemeral: true });
                 }
                 else {
                     await _msgPontoParaColocarRetorno.pontoMessage.edit({ content: `${_msgPontoParaColocarRetorno.pontoMessage.content}\n${dataHora} Retorno`, fetchReply: true });
@@ -76,7 +76,7 @@ client.on('messageCreate', async mensagem => {
             }
             else {
                 //await mensagem.channel.send('Voltou da onde? Nem almoçou direito meu fi, calmai que vovó vai fazer um bolinho pra vc viu');
-                await mensagem.reply({ content: 'Voltou da onde? Nem almoçou direito meu fi, calmai que vovó vai fazer um bolinho pra vc viu', ephemeral: true});
+                await mensagem.reply({ content: 'Voltou da onde? Nem almoçou direito meu fi, calmai que vovó vai fazer um bolinho pra vc viu', ephemeral: true });
                 break;
             }
 
@@ -106,7 +106,7 @@ client.on('messageCreate', async mensagem => {
             }
             else {
                 //await mensagem.channel.send('Nem chegou e já ta saindo fora?')
-                await mensagem.reply({content: 'Nem chegou e já ta saindo fora?', ephemeral: true})
+                await mensagem.reply({ content: 'Nem chegou e já ta saindo fora?', ephemeral: true })
                 await mensagem.author.send('https://www.youtube.com/watch?v=6qkVt3AywOk');
                 break;
             }
@@ -117,66 +117,112 @@ client.on('messageCreate', async mensagem => {
 
 client.on('messageReactionAdd', async (reaction, user) => {
 
-    console.log(reaction._emoji.name);
+    // console.log('010101010110101010101010101');
+    //console.log(reaction.message.interaction)
     // console.log(reaction.count);
     // console.log(reaction);
     // 
-	// When a reaction is received, check if the structure is partial
-	if (reaction.partial) {
-		// If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
-		try {
+    // When a reaction is received, check if the structure is partial
+    if (reaction.partial) {
+        // If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
+        try {
             console.log('dale');
-			await reaction.fetch();
-		} catch (error) {
-			console.error('Something went wrong when fetching the message:', error);
-			// Return as `reaction.message.author` may be undefined/null
-			return;
-		}
-	}
+            await reaction.fetch();
+        } catch (error) {
+            console.error('Something went wrong when fetching the message:', error);
+            // Return as `reaction.message.author` may be undefined/null
+            return;
+        }
+    }
 
-	// // Now the message has been cached and is fully available
-	// console.log(`${reaction.message.author}'s message "${reaction.message.content}" gained a reaction!`);
-	// // The reaction is now also fully available and the properties will be reflected accurately:
-	// console.log(`${reaction.count} user(s) have given the same reaction to this message!`);
+    // console.log(reaction.message.interaction)
+    // console.log(user)
+
+    // // Now the message has been cached and is fully available
+    // console.log(`${reaction.message.author}'s message "${reaction.message.content}" gained a reaction!`);
+    // // The reaction is now also fully available and the properties will be reflected accurately:
+    // console.log(`${reaction.count} user(s) have given the same reaction to this message!`);
 
     if (reaction.emoji.name === '🍽') {
         if (reaction.count === 2) {
 
             // embedPonto.description = `${embedPonto.description}\n${dia.pegaDataHora()} Intervalo`;
             // await reaction.message.edit({ embeds: [embedPonto], fetchReply: true });
-            
-            if (reaction.message.content.includes('Intervalo')) { 
+
+            if (reaction.message.content.includes('Intervalo')) {
                 await reaction.message.react('🤬')
-                await reaction.message.reactions.cache.get('🤬').remove() 
-            } else { 
+                await reaction.message.reactions.cache.get('🤬').remove()
+
+            } else if (reaction.message.interaction.user.id === user.id) {
                 await reaction.message.edit({ content: `${reaction.message.content}\n${dia.pegaDataHora()} Intervalo`, fetchReply: true });
-            } 
+            } else {
+
+                let userReactions = reaction.message.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
+
+                try {
+                    for (const reaction of userReactions.values()) {
+                        await reaction.users.remove(user.id);
+                    }
+                } catch (error) {
+                    console.error('Failed to remove reactions.');
+                }
+
+                await reaction.message.react('🤬')
+                await reaction.message.reactions.cache.get('🤬').remove()
+            }
         }
-        
+
     } else if (reaction.emoji.name === '↩') {
         if (reaction.count === 2) {
 
-            if (reaction.message.content.includes('Retorno')) { 
+            if (reaction.message.content.includes('Retorno')) {
                 await reaction.message.react('🤬')
-                await reaction.message.reactions.cache.get('🤬').remove() 
-            } else { 
+                await reaction.message.reactions.cache.get('🤬').remove()
+            } else if (reaction.message.interaction.user.id === user.id){
                 await reaction.message.edit({ content: `${reaction.message.content}\n${dia.pegaDataHora()} Retorno`, fetchReply: true });
-            } 
+            } else {
+
+                let userReactions = reaction.message.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
+
+                try {
+                    for (const reaction of userReactions.values()) {
+                        await reaction.users.remove(user.id);
+                    }
+                } catch (error) {
+                    console.error('Failed to remove reactions.');
+                }
+
+                await reaction.message.react('🤬')
+                await reaction.message.reactions.cache.get('🤬').remove()
+            }
         }
     } else if (reaction.emoji.name === '👋') {
         if (reaction.count === 2) {
 
-            if (reaction.message.content.includes('Saída')) { 
+            if (reaction.message.content.includes('Saída')) {
                 await reaction.message.react('🤬')
-                await reaction.message.reactions.cache.get('🤬').remove() 
-            } else { 
+                await reaction.message.reactions.cache.get('🤬').remove()
+            } else if (reaction.message.interaction.user.id === user.id){
                 await reaction.message.edit({ content: `${reaction.message.content}\n${dia.pegaDataHora()} Saída`, fetchReply: true });
-            } 
-            //await reaction.message.edit({ content: `${reaction.message.content}\n${dia.pegaDataHora()} Saída`, fetchReply: true });
+
+            } else {
+                let userReactions = reaction.message.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
+
+                try {
+                    for (const reaction of userReactions.values()) {
+                        await reaction.users.remove(user.id);
+                    }
+                } catch (error) {
+                    console.error('Failed to remove reactions.');
+                }
+
+                await reaction.message.react('🤬')
+                await reaction.message.reactions.cache.get('🤬').remove()
+            }
 
         }
     }
-        
+
 });
 
 
@@ -200,7 +246,7 @@ client.on('interactionCreate', async interaction => {
 
         var diaTodo = new Date().setHours(0, 0, 0, 0);
 
-        var _interacao = { userID: interaction.user.id, horarioDia: interaction.createdTimestamp}
+        var _interacao = { userID: interaction.user.id, horarioDia: interaction.createdTimestamp }
         console.log(_interacao);
 
         let _interacoesDoUser = _interacoes.filter(tm => tm.userID === interaction.user.id)
@@ -208,12 +254,12 @@ client.on('interactionCreate', async interaction => {
         _interacoesDoUser.reverse();
 
         let _ultimoPontoBatidoPeloUsuario = _interacoesDoUser.find(last => last.userID === interaction.user.id);
-        
+
 
         if (_interacoesDoUser.length > 0) {
 
             _dataUltimoPonto = new Date(_ultimoPontoBatidoPeloUsuario.horarioDia).setHours(0, 0, 0, 0);
-            
+
             console.log(_dataUltimoPonto);
 
             if (diaTodo > _dataUltimoPonto) {
@@ -221,33 +267,33 @@ client.on('interactionCreate', async interaction => {
                 interaction.channel.send('bom te ver denovo');
 
                 pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${dataHora} Início`, fetchReply: true });
-                
-                _interacao = {_interacao, pontoMessage};
+
+                _interacao = { _interacao, pontoMessage };
                 console.log('*********************************')
                 console.log(_interacao)
-                
+
                 let _firstUserMsg = [{ interaction, pontoMessage }];
                 // _interacoes.push(Object.assign(..._firstUserMsg));
                 _interacoes.push(_interacao);
                 messages.push(Object.assign(..._firstUserMsg));
-        
+
                 //pontoMessage.react(emojis[numeroAleatorio(emojis.length)]);
                 var climaHoje = await clima.pegaClimaRioPreto();
                 pontoMessage.react(climaHoje);
-        
+
                 console.log(pontoMessage.id);
             } else {
-                interaction.reply({ content: 'Ô oreia, vai bate o ponto duas vezes? isso daí pra mim é Hack.', ephemeral: true})
+                interaction.reply({ content: 'Ô oreia, vai bate o ponto duas vezes? isso daí pra mim é Hack.', ephemeral: true })
             }
         } else {
 
             pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${dataHora} Início`, fetchReply: true });
-        
+
             let _firstUserMsg = [{ interaction, pontoMessage }];
             // _interacoes.push(Object.assign(..._firstUserMsg));
             _interacoes.push(_interacao);
             messages.push(Object.assign(..._firstUserMsg));
-    
+
             await pontoMessage.react('⛅');
             await pontoMessage.react('🍽');
             await pontoMessage.react('↩');
@@ -272,7 +318,7 @@ client.on('interactionCreate', async interaction => {
             // };
 
             // interaction.
-            
+
             // pontoMessage = await interaction.reply({ embeds: [embedPonto], fetchReply: true });
             // await pontoMessage.edit(`<@${interaction.user.id}>\n`);
 
@@ -282,7 +328,7 @@ client.on('interactionCreate', async interaction => {
 
             console.log(pontoMessage.id);
         }
- 
+
     }
 
     if (commandName == 'esquecipapa') {
@@ -294,25 +340,25 @@ client.on('interactionCreate', async interaction => {
         _mensagensDePontoDoUsuario.reverse();
 
         let _UltimaMsgDePonto = _mensagensDePontoDoUsuario.find(last => last.interaction.user.id === interaction.user.id);
-        
-        if (_UltimaMsgDePonto) {
-            
-            dataUltimaMsg = new Date(_UltimaMsgDePonto.pontoMessage.createdTimestamp).setHours(0,0,0,0);
 
-            if(diaTodo > dataUltimaMsg) {
-                await interaction.reply({ content: 'Pô esqueceu do ponto hoje Zé? ta marcando, usa o `/esqueciponto` ai vai', ephemeral: true})
+        if (_UltimaMsgDePonto) {
+
+            dataUltimaMsg = new Date(_UltimaMsgDePonto.pontoMessage.createdTimestamp).setHours(0, 0, 0, 0);
+
+            if (diaTodo > dataUltimaMsg) {
+                await interaction.reply({ content: 'Pô esqueceu do ponto hoje Zé? ta marcando, usa o `/esqueciponto` ai vai', ephemeral: true })
             } else {
                 var almocoDoCara = interaction.options.getString('horario');
 
                 if (almocoDoCara.includes(':')) {
-                    await interaction.reply({ content: 'êêêê.. oreiudo memo hein!', ephemeral: true});
+                    await interaction.reply({ content: 'êêêê.. oreiudo memo hein!', ephemeral: true });
                     pontoMessage.edit({ content: `${pontoMessage.content}\n${dia.pegaData()} - ${almocoDoCara} Intervalo`, fetchReply: true })
-                }else{
-                    await interaction.reply({ content: 'O modelo de horas utilizado é => **00:00**', ephemeral: true});
+                } else {
+                    await interaction.reply({ content: 'O modelo de horas utilizado é => **00:00**', ephemeral: true });
                 }
             }
         } else {
-            await interaction.reply({ content: 'Vai pro almoço direto?', ephemeral: true});
+            await interaction.reply({ content: 'Vai pro almoço direto?', ephemeral: true });
         }
 
 

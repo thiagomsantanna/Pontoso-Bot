@@ -28,25 +28,20 @@ async function salvaMessage(pontoMessage, interaction) {
     });
 };
 
-async function salvaPonto(usuario, pontoMessage, interaction) {
-    //pontoMessage.edit('testaq');
+async function salvaPonto(usuario_id, data_ponto) {
 
-    let mensagemPonto = { interaction, pontoMessage};
-    const jsonMensagemPonto = JSON.stringify(mensagemPonto, (key, value) =>
-        typeof value === "bigint" ? value.toString() + "n" : value
-    );
-
-    //lembrar de setar um tempo de expiração
-    client.set(`ponto_batido:${usuario}`, mensagemPonto, (error, result) => {
-        error ? console.log(error) : console.log(result);
-    });
+    const setAsync = promisify(client.set).bind(client);
+    
+    await setAsync(`ponto_batido:${usuario_id}`, data_ponto, 'EX', 57600)//12h
+        .then((error, result) => { 
+            error ? console.log(error) : console.log(result); 
+        });
 }
 
-async function getPontosDoUsuario(usuario) {
+async function getPontosDoUsuario(usuario_id) {
 
     const getAsync = promisify(client.get).bind(client);
-    let ponto = await getAsync(`ponto_batido:${usuario}`)
-    ponto = JSON.parse(ponto);
+    let ponto = await getAsync(`ponto_batido:${usuario_id}`)
 
     return ponto;
 }
@@ -55,20 +50,21 @@ async function getChave() {
 
     const getAsync = promisify(client.get).bind(client);
     let valorChave = await getAsync('test')
-    
+
     return valorChave;
 }
 
 async function apagaPontoAntigo(usuario) {
 
-    client.del(`ponto_batido:${usuario}`, function(err, response) {
+    client.del(`ponto_batido:${usuario}`, function (err, response) {
         if (response == 1) {
-           console.log("Deleted Successfully!")
-        } else{
-         console.log("Cannot delete")
+            console.log("Deleted Successfully!")
+        } else {
+            console.log("Cannot delete")
         }
-     });
+    });
 }
 
 //salvaMessage('daledaledaleputaqpariu');
-module.exports = { salvaPonto, salvaMessage, getChave , getPontosDoUsuario , apagaPontoAntigo};
+salvaPonto('test', 'fodase');
+module.exports = { salvaPonto, salvaMessage, getChave, getPontosDoUsuario, apagaPontoAntigo };

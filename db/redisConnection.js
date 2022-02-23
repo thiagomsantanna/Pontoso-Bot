@@ -28,14 +28,13 @@ async function salvaMessage(pontoMessage, interaction) {
     });
 };
 
-async function salvaPonto(usuario_id, data_ponto) {
+async function salvaPonto(usuario_id, data_ponto, horarios) {
+
+    const pontoObj = { data_ponto: data_ponto, horarios: horarios };
 
     const setAsync = promisify(client.set).bind(client);
     
-    await setAsync(`ponto_batido:${usuario_id}`, data_ponto, 'EX', 57600)//12h
-        .then((error, result) => { 
-            error ? console.log(error) : console.log(result); 
-        });
+    await setAsync(`ponto_batido:${usuario_id}`, JSON.stringify(pontoObj), 'EX', 72000);
 }
 
 async function getPontosDoUsuario(usuario_id) {
@@ -65,6 +64,5 @@ async function apagaPontoAntigo(usuario) {
     });
 }
 
-//salvaMessage('daledaledaleputaqpariu');
-salvaPonto('test', 'fodase');
+salvaPonto('test', 'fodase', 'dale no ponto');
 module.exports = { salvaPonto, salvaMessage, getChave, getPontosDoUsuario, apagaPontoAntigo };

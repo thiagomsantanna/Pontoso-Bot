@@ -1,4 +1,4 @@
-const redis = require('./redisConnection');
+const redis = require('../db/redisConnection');
 
 async function adicionaReacoes(ponto, reacoes){
 
@@ -15,8 +15,9 @@ async function respondeOPonto(interacao, dataeHorario){
             content: `>>> <@${interacao.user.id}>\n${dataeHorario} Início`, 
             fetchReply: true 
         });
-
-    await redis.salvaPonto(interacao.user.id, interacao.createdTimestamp);
+    
+    // await redis.salvaMessage()
+    await redis.salvaPonto(interacao.user.id, interacao.createdTimestamp, pontoInicio.content);
 
     return pontoInicio;
 }

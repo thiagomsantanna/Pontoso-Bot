@@ -64,5 +64,4 @@ async function apagaPontoAntigo(usuario) {
     });
 }
 
-salvaPonto('test', 'fodase', 'dale no ponto');
 module.exports = { salvaPonto, salvaMessage, getChave, getPontosDoUsuario, apagaPontoAntigo };

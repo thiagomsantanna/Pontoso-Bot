@@ -40,4 +40,3 @@ async function pegaClimaRioPreto(){
 }
 
 module.exports = { pegaClimaRioPreto };
-//pegaClimaRioPreto();

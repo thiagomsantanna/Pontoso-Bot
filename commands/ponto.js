@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const dia = require('../utils/pegaDataHora.js');
-const fbomDia = require('../utils/frasesBomDia.js');
 const redis = require('../db/redisConnection');
 const discord = require('../utils/pontoCommands');
 

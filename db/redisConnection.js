@@ -1,8 +1,19 @@
 const redis = require("redis");
 const { promisify } = require('util')
 const { Client, Intents, CommandInteractionOptionResolver } = require('discord.js');
-const client = redis.createClient(); //por padrão o redis usa a porta 6379 e ip 127.0.0.1
-//const client = redis.createClient(port, host); //porta e ip
+require('dotenv').config({ path: '.env' })
+
+let client;
+
+if(process.env.REDIS_URL){
+    //connect no redis no heroku
+    client = redis.createClient({
+        url: process.env.REDIS_URL,
+    })
+} else {
+    //connect no redis localhost
+    client = redis.createClient();
+}
 
 //escuta qualquer erro causado na conexão com o redis
 client.on("error", (err) => {

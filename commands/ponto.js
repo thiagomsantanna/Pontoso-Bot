@@ -49,7 +49,7 @@ module.exports = {
 
             } else {
 
-                pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${dataHora} Início`, fetchReply: true });
+                pontoMessage = await interaction.reply({ content: `>>> <@${interaction.user.id}>\n${dia.pegaDataHora()} Início`, fetchReply: true });
 
                 await pontoMessage.react('⛅');
                 await pontoMessage.react('🍽');

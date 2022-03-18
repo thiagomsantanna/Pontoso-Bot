@@ -17,7 +17,7 @@ module.exports = {
                 return;
             }
         }
-    
+            
         if (reaction.emoji.name === '🍽') {
             if (reaction.count === 2) {
     

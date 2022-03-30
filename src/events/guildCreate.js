@@ -15,7 +15,7 @@ for(const file of commandFiles){
 };
 
 
-module.exports ={
+module.exports = {
     name: 'guildCreate',
     once: false,
     async execute(guild){

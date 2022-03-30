@@ -21,9 +21,6 @@ const commands = [
 		option.setName('horario')
 		.setDescription('Horário no qual deveria ter batido o ponto,\n utilize o modelo => "00:00" com dois pontos')
 		.setRequired(true))
-	// new SlashCommandBuilder().setName('almoco').setDescription('Marca o horário de Almoço.'),
-	// new SlashCommandBuilder().setName('voltei').setDescription('Marca o horário de volta ao trabalho.'),
-	// new SlashCommandBuilder().setName('tchau').setDescription('Marca o horário de saída')
 ]
 	.map(command => command.toJSON());
 

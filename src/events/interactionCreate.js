@@ -1,7 +1,6 @@
 const { Collection, Intents } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-//const t = require('../commands/ponto');
 
 module.exports = {
     name: 'interactionCreate',

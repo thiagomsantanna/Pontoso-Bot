@@ -1,10 +1,14 @@
-const { DataHora, Data } = require("../utils/DataHoraUtils.js");
-const { MensagemDeBomDia } = require('../utils/FrasesBomDia.js');
+const dataUtil = require("../utils/DataHoraUtils.js");
+const frasesBomDiaUtil = require('../utils/FrasesBomDia.js');
 
 module.exports = {
   name: "messageReactionAdd",
   once: false,
   async execute(reaction, user) {
+
+    const { DataHora, Data } = dataUtil;
+    const { MensagemDeBomDia } = frasesBomDiaUtil;
+
     if (reaction.partial) {
       try {
         await reaction.fetch();

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { DataHora, Data } = require("../utils/DataHoraUtils.js");
+const dataUtil = require("../utils/DataHoraUtils.js");
 const redis = require("../utils/RedisUtils.js");
 const discord = require("../utils/PontoUtils.js");
 
@@ -17,7 +17,7 @@ module.exports = {
     let horarioOption = interaction.options.getString("horario");
 
     let pontoUsuario = JSON.parse(await redis.getPonto(interaction.user.id));
-    let dataHora;
+    const { DataHora, Data } = dataUtil;
 
     if (pontoUsuario) {
       let diaDoPonto = new Date(parseInt(pontoUsuario.data_ponto)).setHours(0, 0, 0, 0);
@@ -29,9 +29,9 @@ module.exports = {
           if (
             horarioOption.match("^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$")
           ) {
-            dataHora = `${Data} - ${horarioOption}`;
+            // dataHora = `${Data.Data} - ${horarioOption}`;
 
-            const ponto = await discord.BateOPonto(interaction, dataHora);
+            const ponto = await discord.BateOPonto(interaction, `${Data} - ${horarioOption}`);
             await discord.AdicionaReacoes(ponto);
 
             console.log(ponto.id);

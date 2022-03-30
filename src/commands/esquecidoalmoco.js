@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { DataHora, Data } = require("../utils/DataHoraUtils.js");
+const dataUtil = require("../utils/DataHoraUtils.js");
 // const redis = require("../db/redisConnection");
 const redis = require('../utils/RedisUtils.js');
 
@@ -18,6 +18,7 @@ module.exports = {
   async execute(interaction) {
     let horarioOption = interaction.options.getString("horario");
 
+    const { DataHora, Data } = dataUtil;
     // var pontoDoUsuario = JSON.parse(
     //   await redis.getPonto(interaction.user.id)
     // );

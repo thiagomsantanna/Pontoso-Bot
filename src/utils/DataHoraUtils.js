@@ -5,7 +5,7 @@ class DataUtil {
   #minutosAgora;
   #horasAgora;
 
-  constructor() {
+  Setup() {
     let dia = new Date().getDate();
     let minAgora = new Date().getMinutes();
 
@@ -20,12 +20,14 @@ class DataUtil {
   }
 
   get DataHora() {
+    this.Setup();
     return `${this.#diaHoje}/${this.#mesHoje}/${this.#anoHoje} - ${
       this.#horasAgora
     }:${this.#minutosAgora}`;
   }
 
   get Data() {
+    this.Setup();
     return `${this.#diaHoje}/${this.#mesHoje}/${this.#anoHoje}`;
   }
 }

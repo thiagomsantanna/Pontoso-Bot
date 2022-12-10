@@ -7,7 +7,6 @@ function* mockRandom() {
 const mock = mockRandom();
 global.Math.random = () => mock.next().value;
 
-
 describe("goodMorning phrases", () => {
   describe("getRandomPhrase()", () => {
     it("should return a different phrase every time its called", () => {

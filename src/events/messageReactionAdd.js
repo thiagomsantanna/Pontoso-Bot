@@ -1,166 +1,98 @@
-const dataUtil = require("../utils/DataHoraUtils.js");
-const frasesBomDiaUtil = require('../utils/FrasesBomDia.js');
+const { dateTime } = require("../../modules/dateTimeFormatter");
+const getRandomPhrase = require("../../modules/goodMorning");
+
+const isReactionCountCorrect = (reaction) => reaction.count === 2;
+
+async function angryReact(reaction) {
+  const reactions = reaction.message.reactions.cache;
+
+  await reaction.message.react("🤬");
+  await reactions.get("🤬").remove();
+}
+
+async function removeEmoji(emoji, reaction, userId) {
+  const reactions = reaction.message.reactions.cache;
+  const userReactions = reactions.filter((r) => r.users.cache.has(userId));
+
+  for (const reaction of userReactions) {
+    if (reaction._emoji.name === emoji)
+      await reaction.users.remove(userId).catch((e) => console.error(e));
+  }
+}
+
+async function throwEmojiError(emoji, reaction, userId) {
+  await angryReact(reaction);
+  await removeEmoji(emoji, reaction, userId);
+}
 
 module.exports = {
   name: "messageReactionAdd",
   once: false,
   async execute(reaction, user) {
-
-    const { DataHora, Data } = dataUtil;
-    const { MensagemDeBomDia } = frasesBomDiaUtil;
-
     if (reaction.partial) {
       try {
         await reaction.fetch();
-        console.log("coisei o coiso!!");
       } catch (error) {
         console.error("Error fetching reaction:", error);
         return;
       }
     }
 
-    if (reaction.emoji.name === "🍽") {
-      if (reaction.count === 2) {
-        if (reaction.message.content.includes("Intervalo")) {
-          await reaction.message.react("🤬");
-          await reaction.message.reactions.cache.get("🤬").remove();
-        } else if (reaction.message.interaction.user.id === user.id) {
-          await reaction.message.edit({
-            content: `${
-              reaction.message.content
-            }\n${DataHora} Intervalo`,
-            fetchReply: true,
-          });
-        } else {
-          let userReactions = reaction.message.reactions.cache.filter(
-            (reaction) => reaction.users.cache.has(user.id)
-          );
+    const eventEmoji = reaction.emoji.name;
 
-          try {
-            for (const reaction of userReactions.values()) {
-              await reaction.users.remove(user.id);
-            }
-          } catch (error) {
-            console.error("Failed to remove reactions.");
-          }
+    const clockIn = reaction.message.content;
+    const messageOwner = reaction.message.interaction.user;
+    const userId = user.id;
 
-          await reaction.message.react("🤬");
-          await reaction.message.reactions.cache.get("🤬").remove();
-        }
-      }
-    } else if (reaction.emoji.name === "↩") {
-      if (reaction.count === 2) {
-        if (!reaction.message.content.includes("Intervalo")) {
-          await reaction.message.react("🤬");
-          await reaction.message.reactions.cache.get("🤬").remove();
+    if (messageOwner.id !== userId || !isReactionCountCorrect(reaction)) {
+      await throwEmojiError(eventEmoji, reaction, userId);
+      return;
+    }
 
-          let userReactions = reaction.message.reactions.cache.filter(
-            (reaction) => reaction.users.cache.has(user.id)
-          );
+    switch (eventEmoji) {
+      case "⛅":
+        const morningMsg = await reaction.message.channel.send({
+          content: `${getRandomPhrase()} <@${user.id}>`,
+          fetchReply: true,
+        });
+        setTimeout(() => morningMsg.delete(), 5000);
 
-          try {
-            for (const reaction of userReactions.values()) {
-              reaction._emoji.name == "↩"
-                ? await reaction.users.remove(user.id)
-                : null;
-              // await reaction.users.remove(user.id);
-            }
-          } catch (error) {
-            console.error("Failed to remove reactions.");
-          }
-        } else if (reaction.message.interaction.user.id === user.id) {
-          await reaction.message.edit({
-            content: `${
-              reaction.message.content
-            }\n${DataHora} Retorno`,
-            fetchReply: true,
-          });
-        } else {
-          let userReactions = reaction.message.reactions.cache.filter(
-            (reaction) => reaction.users.cache.has(user.id)
-          );
+        await removeEmoji("⛅", reaction, userId);
 
-          try {
-            for (const reaction of userReactions.values()) {
-              await reaction.users.remove(user.id);
-            }
-          } catch (error) {
-            console.error("Failed to remove reactions.");
-          }
+        break;
+      case "🍽":
+        if (clockIn.includes("Intervalo"))
+          return await throwEmojiError("🍽", reaction, userId);
 
-          await reaction.message.react("🤬");
-          await reaction.message.reactions.cache.get("🤬").remove();
-        }
-      }
-    } else if (reaction.emoji.name === "👋") {
-      if (reaction.count === 2) {
-        if (reaction.message.content.includes("Saída")) {
-          await reaction.message.react("🤬");
-          await reaction.message.reactions.cache.get("🤬").remove();
-        } else if (reaction.message.interaction.user.id === user.id) {
-          await reaction.message.edit({
-            content: `${reaction.message.content}\n${DataHora} Saída`,
-            fetchReply: true,
-          });
-        } else {
-          let userReactions = reaction.message.reactions.cache.filter(
-            (reaction) => reaction.users.cache.has(user.id)
-          );
+        await reaction.message.edit({
+          content: `${clockIn}\n${dateTime()} Intervalo`,
+          fetchReply: true,
+        });
 
-          try {
-            for (const reaction of userReactions.values()) {
-              await reaction.users.remove(user.id);
-            }
-          } catch (error) {
-            console.error("Failed to remove reactions.");
-          }
+        break;
+      case "↩":
+        if (!clockIn.includes("Intervalo"))
+          return await throwEmojiError("↩", reaction, userId);
 
-          await reaction.message.react("🤬");
-          await reaction.message.reactions.cache.get("🤬").remove();
-        }
-      }
-    } else if (reaction.emoji.name === "⛅") {
-      if (reaction.count === 2) {
-        if (reaction.message.interaction.user.id === user.id) {
-          await reaction.message.channel
-            .send({
-              content: `${MensagemDeBomDia} <@${user.id}>`,
-              fetchReply: true,
-            })
-            .then((msgBd) =>
-              setTimeout(() => {
-                msgBd.delete();
-              }, 5000)
-            );
-          let userReactions = reaction.message.reactions.cache.filter(
-            (reaction) =>
-              reaction.users.cache.has(reaction.message.interaction.user.id)
-          );
+        await reaction.message.edit({
+          content: `${clockIn}\n${dateTime} Retorno`,
+          fetchReply: true,
+        });
 
-          try {
-            for (const reaction of userReactions.values()) {
-              await reaction.users.remove(user.id);
-            }
-          } catch (error) {
-            console.error("Failed to remove reactions.");
-          }
-        } else {
-          let userReactions = reaction.message.reactions.cache.filter(
-            (reaction) => reaction.users.cache.has(user.id)
-          );
+        break;
+      case "👋":
+        if (clockIn.includes("Saída"))
+          return await throwEmojiError("👋", reaction, userId);
 
-          try {
-            for (const reaction of userReactions.values()) {
-              await reaction.users.remove(user.id);
-            }
-          } catch (error) {
-            console.error("Failed to remove reactions.");
-          }
+        await reaction.message.edit({
+          content: `${clockIn}\n${dateTime()} Saída`,
+          fetchReply: true,
+        });
 
-          await reaction.message.react("🤬");
-          await reaction.message.reactions.cache.get("🤬").remove();
-        }
-      }
+        break;
+      default:
+        await throwEmojiError(eventEmoji, reaction, userId);
+        break;
     }
   },
 };

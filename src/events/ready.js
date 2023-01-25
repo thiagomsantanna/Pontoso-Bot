@@ -1,7 +1,7 @@
 module.exports = {
-    name: 'ready',
-    once: true,
-    execute() {
-        console.log('Pronto!');
-    }
+  name: "ready",
+  once: true,
+  execute() {
+    console.log("Pronto!");
+  },
 };

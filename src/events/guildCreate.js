@@ -1,7 +1,9 @@
 const { Routes } = require("discord-api-types/v9");
 const { REST } = require("@discordjs/rest");
-const rest = new REST({ version: "9" }).setToken(process.env.BOT_TOKEN);
+const { ChannelType } = require("discord.js");
 const commands = require("../commands");
+
+const rest = new REST({ version: "9" }).setToken(process.env.BOT_TOKEN);
 
 const welcomeMessage = {
   title: "Obrigado por convidar o Pontoso ao seu servidor!",
@@ -21,8 +23,9 @@ module.exports = {
     const alreadyHasChannel = channels.some((c) => c.name === "ponto");
 
     if (!alreadyHasChannel) {
-      const pontoChannel = await guild.channels.create("ponto", {
-        type: "text",
+      const pontoChannel = await guild.channels.create({
+        name: "ponto",
+        type: ChannelType.GuildText,
       });
 
       await pontoChannel.send({
@@ -31,13 +34,14 @@ module.exports = {
       });
     }
 
-    rest
-      .put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guild.id), {
-        body: Object.values(commands).map((c) => c.toJSON()),
-      })
-      .then(() =>
-        console.log(`Successfully deployed commands to: ${guild.name}`)
-      )
-      .catch(console.error);
+    const route = Routes.applicationGuildCommands(
+      process.env.CLIENT_ID,
+      guild.id,
+    );
+    const payload = { body: Object.values(commands).map((c) => c.toJSON()) };
+
+    await rest.put(route, payload).catch(console.error);
+
+    console.log(`Successfully deployed commands to: ${guild.name}`);
   },
 };

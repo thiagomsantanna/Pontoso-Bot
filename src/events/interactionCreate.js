@@ -6,7 +6,7 @@ module.exports = {
   name: "interactionCreate",
   once: false,
   async execute(interaction) {
-    const client = interaction.client;
+    const { client } = interaction;
     client.commands = new Collection();
 
     const commandFiles = fs
@@ -24,10 +24,6 @@ module.exports = {
 
     if (!command) return;
 
-    try {
-      await command.execute(interaction);
-    } catch (error) {
-      console.error(error);
-    }
+    await command.execute(interaction).catch(console.error);
   },
 };

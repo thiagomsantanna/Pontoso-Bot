@@ -1,34 +1,14 @@
+/* eslint no-return-await: "off" */
 const { dateTime } = require("../../modules/dateTimeFormatter");
 const getRandomPhrase = require("../../modules/goodMorning");
-
-const isReactionCountCorrect = (reaction) => reaction.count === 2;
-
-async function angryReact(reaction) {
-  const reactions = reaction.message.reactions.cache;
-
-  await reaction.message.react("🤬");
-  await reactions.get("🤬").remove();
-}
-
-async function removeEmoji(emoji, reaction, userId) {
-  const reactions = reaction.message.reactions.cache;
-  const userReactions = reactions.filter((r) => r.users.cache.has(userId));
-
-  for (const reaction of userReactions) {
-    if (reaction._emoji.name === emoji)
-      await reaction.users.remove(userId).catch((e) => console.error(e));
-  }
-}
-
-async function throwEmojiError(emoji, reaction, userId) {
-  await angryReact(reaction);
-  await removeEmoji(emoji, reaction, userId);
-}
+const { updateClockIn } = require("../../modules/clockIn");
 
 module.exports = {
   name: "messageReactionAdd",
   once: false,
   async execute(reaction, user) {
+    if (user.bot) return;
+
     if (reaction.partial) {
       try {
         await reaction.fetch();
@@ -44,55 +24,96 @@ module.exports = {
     const messageOwner = reaction.message.interaction.user;
     const userId = user.id;
 
-    if (messageOwner.id !== userId || !isReactionCountCorrect(reaction)) {
-      await throwEmojiError(eventEmoji, reaction, userId);
-      return;
-    }
+    if (messageOwner.id !== userId || !isReactionCountCorrect(reaction))
+      return await throwEmojiError(eventEmoji, reaction, userId);
 
     switch (eventEmoji) {
-      case "⛅":
+      case "⛅": {
         const morningMsg = await reaction.message.channel.send({
           content: `${getRandomPhrase()} <@${user.id}>`,
-          fetchReply: true,
         });
-        setTimeout(() => morningMsg.delete(), 5000);
+        await sleep(3);
 
+        await morningMsg.delete();
         await removeEmoji("⛅", reaction, userId);
-
         break;
-      case "🍽":
+      }
+      case "🍽": {
         if (clockIn.includes("Intervalo"))
           return await throwEmojiError("🍽", reaction, userId);
 
-        await reaction.message.edit({
-          content: `${clockIn}\n${dateTime()} Intervalo`,
-          fetchReply: true,
-        });
+        await reaction.message.edit({ content: clockIn + stamp("🍽") });
+        const { message } = reaction;
 
+        await updateClockIn(userId, message.content);
         break;
-      case "↩":
-        if (!clockIn.includes("Intervalo"))
+      }
+      case "↩": {
+        if (!clockIn.includes("Intervalo") || clockIn.includes("Retorno"))
           return await throwEmojiError("↩", reaction, userId);
 
-        await reaction.message.edit({
-          content: `${clockIn}\n${dateTime} Retorno`,
-          fetchReply: true,
-        });
+        await reaction.message.edit({ content: clockIn + stamp("↩") });
+        const { message } = reaction;
 
+        await updateClockIn(userId, message.content);
         break;
-      case "👋":
+      }
+      case "👋": {
         if (clockIn.includes("Saída"))
           return await throwEmojiError("👋", reaction, userId);
 
-        await reaction.message.edit({
-          content: `${clockIn}\n${dateTime()} Saída`,
-          fetchReply: true,
-        });
+        await reaction.message.edit({ content: clockIn + stamp("👋") });
+        const { message } = reaction;
 
+        await updateClockIn(userId, message.content);
         break;
+      }
       default:
         await throwEmojiError(eventEmoji, reaction, userId);
-        break;
     }
   },
 };
+
+function stamp(emoji) {
+  const events = {
+    "🍽": "Intervalo",
+    "↩": "Retorno",
+    "👋": "Saída",
+  };
+  // eslint-disable-next-line prefer-template
+  return `\n ${dateTime()} ` + events[emoji];
+}
+
+function isReactionCountCorrect(reaction) {
+  return reaction.count === 2;
+}
+
+async function sleep(seconds) {
+  const ms = seconds * 1000;
+  return new Promise((_) => {
+    setTimeout(_, ms);
+  });
+}
+
+async function angryReact(reaction) {
+  const reactions = reaction.message.reactions.cache;
+
+  await reaction.message.react("🤬");
+  await reactions.get("🤬").remove();
+}
+
+async function removeEmoji(emoji, reaction, userId) {
+  const reactions = reaction.message.reactions.cache;
+  const userReactions = reactions.filter((r) => r.users.cache.has(userId));
+
+  for (const userReaction of userReactions.values()) {
+    // eslint-disable-next-line no-underscore-dangle
+    if (userReaction._emoji.name === emoji)
+      await userReaction.users.remove(userId).catch((e) => console.error(e));
+  }
+}
+
+async function throwEmojiError(emoji, reaction, userId) {
+  await angryReact(reaction);
+  await removeEmoji(emoji, reaction, userId);
+}

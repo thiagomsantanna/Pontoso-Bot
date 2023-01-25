@@ -58,9 +58,8 @@ async function getLastUserClockIn(interaction, userId) {
   const pontoChannel = guildChannels.find((c) => c.name === "ponto");
 
   const pontoMessages = await pontoChannel.messages.fetch();
-  // TODO: remove Pontoso-dev
   const clockIns = pontoMessages.filter(
-    ({ author }) => author.username === "Pontoso-dev",
+    ({ author }) => author.username === "Pontoso",
   );
 
   return clockIns.find((msg) => msg.content.includes(`<@${userId}>`));

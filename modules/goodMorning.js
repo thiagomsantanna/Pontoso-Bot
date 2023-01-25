@@ -14,7 +14,8 @@ const phrases = [
   "O mundo é de quem busca o seu melhor todos os dias! Um bom dia para você.",
   "Bom dia! Se não puder fazer tudo, faça tudo o que puder.",
   "Bom dia! Viva simples, sonhe grande, seja grato, dê amor e ria muito.",
-  "Que seja infinito o que nos faz bem. Um bom dia maravilhoso a todos!"
+  "Que seja infinito o que nos faz bem. Um bom dia maravilhoso a todos!",
+  "Discipline a sua rotina, não deixe que sua rotina se torne sua disciplina. Bom dia!",
 ];
 
 function getRandomPhrase() {

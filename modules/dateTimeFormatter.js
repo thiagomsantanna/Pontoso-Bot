@@ -1,4 +1,4 @@
-const clock = {
+const calendar = {
   day: () => new Date().getDate(),
   month: () => new Date().getMonth() + 1,
   year: () => new Date().getFullYear(),
@@ -11,12 +11,12 @@ const clock = {
 
 module.exports = {
   dateTime() {
-    const date = `${clock.day()}/${clock.month()}/${clock.year()}`;
-    const time = `${clock.hours()}:${clock.minutes()}`;
+    const date = `${calendar.day()}/${calendar.month()}/${calendar.year()}`;
+    const time = `${calendar.hours()}:${calendar.minutes()}`;
 
     return date + " - " + time;
   },
   date() {
-    return `${clock.day()}/${clock.month()}/${clock.year()}`;
+    return `${calendar.day()}/${calendar.month()}/${calendar.year()}`;
   },
 };

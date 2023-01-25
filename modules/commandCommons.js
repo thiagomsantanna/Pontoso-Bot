@@ -4,11 +4,11 @@ const ERROR_MESSAGES = {
     ephemeral: true,
   }),
   punchedTwoTimes: (userId) => ({
-    content: `>>> Mai é Zé dentro d\'água memo né, já bateu o ponto hoje mano.\n<@${userId}>`,
+    content: `>>> Mai é Zé dentro d'água memo né, já bateu o ponto hoje mano.\n<@${userId}>`,
     ephemeral: true,
   }),
   didNotPunched: (userId) => ({
-    content: `<@${userId}>\n Você não tem nenhum ponto registrado ou seu último ponto já é de dias passados, utilize o \`ponto\` com seu horário de ínicio.`,
+    content: `<@${userId}>\n Você não tem nenhum ponto registrado ou seu último ponto já é de dias passados, utilize o \`/ponto\` com seu horário de ínicio.`,
     ephemeral: true,
   }),
   breakWithoutReturn: (userId) => ({
@@ -17,9 +17,9 @@ const ERROR_MESSAGES = {
   }),
 };
 
-async function timeTableIsValid(option) {
-  const regex = "^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
-  return !!option.match(regex);
+function schedulesIsValid(time) {
+  const regex = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+  return regex.test(time);
 }
 
 async function replyError(interaction, errorType) {
@@ -28,4 +28,4 @@ async function replyError(interaction, errorType) {
   await interaction.reply(ERROR_MESSAGES[errorType](userId));
 }
 
-module.exports = { replyError, timeTableIsValid };
+module.exports = { replyError, schedulesIsValid };

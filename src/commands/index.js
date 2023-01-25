@@ -7,8 +7,7 @@ const ponto = new SlashCommandBuilder()
     option
       .setName("horario")
       .setDescription("Coloca um horário especifíco")
-      .setRequired(false)
-  );
+      .setRequired(false));
 
 const esquecidoalmoco = new SlashCommandBuilder()
   .setName("esquecidoalmoco")
@@ -17,21 +16,8 @@ const esquecidoalmoco = new SlashCommandBuilder()
     option
       .setName("horario")
       .setDescription(
-        'Horário no qual saiu para seu intervalo,\n utilize o modelo => "00:00" com dois pontos'
+        'Horário no qual saiu para seu intervalo,\n utilize o modelo => "00:00" com dois pontos',
       )
-      .setRequired(true)
-  );
-
-// const esqueci = new SlashCommandBuilder()
-//   .setName("esqueci")
-//   .setDescription("Pros esquecidos que esqueceram de bater o ponto")
-//   .addStringOption((option) =>
-//     option
-//       .setName("horario")
-//       .setDescription(
-//         'Horário no qual deveria ter batido o ponto,\n utilize o modelo => "00:00" com dois pontos'
-//       )
-//       .setRequired(true)
-//   );
+      .setRequired(true));
 
 module.exports = { ponto, esquecidoalmoco };

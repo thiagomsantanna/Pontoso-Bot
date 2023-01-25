@@ -1,58 +1,67 @@
-const { esquecidoalmoco } = require("../commands");
+/* eslint-disable no-return-await */
+const { esquecidoalmoco } = require(".");
 const { date } = require("../../modules/dateTimeFormatter");
 const { getClockIn } = require("../../modules/clockIn");
-const { replyError, timeTableIsValid } = require("../../modules/commandCommons");
-
-async function validateClockIn(lastUserClockIn) {
-  const { createdTimestamp, content } = lastUserClockIn;
-
-  const today = new Date().setHours(0, 0, 0, 0);
-  const lastUserClockInDate = new Date(createdTimestamp).setHours(0, 0, 0, 0);
-
-  if (!lastUserClockIn || lastUserClockInDate !== today)
-    return await replyError(interaction, "didNotPunched");
-
-  if (content.includes("Intervalo") && !content.includes("Retorno")) {
-    return await replyError(interaction, "breakWithoutReturn");
-  }
-}
-
-async function getLastUserClockIn({ guild }) {
-  const guild = await guild.fetch();
-
-  const guildChannels = await guild.channels.fetch();
-  const pontoChannel = guildChannels.find(
-    ({ name }) => name === "ponto" && c.type === "GUILD_TEXT"
-  );
-  const clockIns = (await pontoChannel.messages.fetch()).filter(
-    ({ author }) => author.username === "Pontoso"
-  );
-
-  return clockIns.find((msg) => msg.content.includes(`<@${userId}>`));
-}
+const {
+  replyError,
+  schedulesIsValid,
+} = require("../../modules/commandCommons");
 
 module.exports = {
   data: esquecidoalmoco,
   async execute(interaction) {
     const userId = interaction.user.id;
-    const timeTableOption = interaction.options.getString("horario");
-    if (!timeTableOption && !timeTableIsValid(timeTableOption))
+
+    const timeOption = interaction.options.getString("horario");
+    if (timeOption && !schedulesIsValid(timeOption))
       return await replyError(interaction, "invalidDate");
 
-    const userClockKey = await getClockIn(userId);
-    if (!userClockKey) return await replyError(interaction, "didNotPunched");
+    const isValid = await clockInIsValid(userId);
+    if (!isValid) return await replyError(interaction, "didNotPunched");
 
-    const lastUserClockIn = await getLastUserClockIn(interaction);
+    const clockIn = await getLastUserClockIn(interaction, userId);
 
-    // TODO: Ensure that the method stops the execution if an error is replied
-    await validateClockIn(lastUserClockIn);
+    const lunch = clockIn.content
+      .split("\n")
+      .find((c) => c.includes("Intervalo"));
+    const correctLunch = `\n ${date()} - ${timeOption} Intervalo`;
 
-    await lastUserClockIn.edit(
-      `${lastUserClockIn.content}\n${date()} - ${timeTableOption} Intervalo`
-    );
+    if (lunch) {
+      clockIn.content = clockIn.content.replace(`\n${lunch}`, correctLunch);
+    } else {
+      clockIn.content += correctLunch;
+    }
+
+    await clockIn.edit(clockIn.content);
     await interaction.reply({
       content: `<@${userId}>\n Inserimos seu horário de intervalo!`,
       ephemeral: true,
     });
   },
 };
+
+async function clockInIsValid(userId) {
+  const userClockIn = await getClockIn(userId);
+  if (!userClockIn) return false;
+
+  const { timestamp } = userClockIn;
+
+  const today = new Date().setHours(0, 0, 0, 0);
+  const lastClockInDate = new Date(timestamp).setHours(0, 0, 0, 0);
+
+  return lastClockInDate === today;
+}
+
+async function getLastUserClockIn(interaction, userId) {
+  const guild = await interaction.guild.fetch();
+  const guildChannels = await guild.channels.fetch();
+  const pontoChannel = guildChannels.find((c) => c.name === "ponto");
+
+  const pontoMessages = await pontoChannel.messages.fetch();
+  // TODO: remove Pontoso-dev
+  const clockIns = pontoMessages.filter(
+    ({ author }) => author.username === "Pontoso-dev",
+  );
+
+  return clockIns.find((msg) => msg.content.includes(`<@${userId}>`));
+}

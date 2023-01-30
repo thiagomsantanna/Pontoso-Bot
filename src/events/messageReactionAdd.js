@@ -1,7 +1,8 @@
 /* eslint no-return-await: "off" */
+const sleep = require("node:timers/promises").setTimeout;
 const { dateTime } = require("../../modules/dateTimeFormatter");
-const getRandomPhrase = require("../../modules/goodMorning");
 const { updateClockIn } = require("../../modules/clockIn");
+const getRandomPhrase = require("../../modules/goodMorning");
 
 module.exports = {
   name: "messageReactionAdd",
@@ -32,7 +33,7 @@ module.exports = {
         const morningMsg = await reaction.message.channel.send({
           content: `${getRandomPhrase()} <@${user.id}>`,
         });
-        await sleep(3);
+        await sleep(2000);
 
         await morningMsg.delete();
         await removeEmoji("⛅", reaction, userId);
@@ -86,13 +87,6 @@ function stamp(emoji) {
 
 function isReactionCountCorrect(reaction) {
   return reaction.count === 2;
-}
-
-async function sleep(seconds) {
-  const ms = seconds * 1000;
-  return new Promise((_) => {
-    setTimeout(_, ms);
-  });
 }
 
 async function angryReact(reaction) {

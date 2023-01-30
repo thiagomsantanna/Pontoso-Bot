@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 const { assert } = require("chai");
-const { date, dateTime } = require("../utils/dateTimeFormatter");
+const { date, dateTime } = require("../modules/dateTimeFormatter");
 
 beforeAll(() => {
   jest

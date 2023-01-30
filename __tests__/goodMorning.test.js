@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 const { assert } = require("chai");
-const getRandomPhrase = require("../utils/goodMorning");
+const getRandomPhrase = require("../modules/goodMorning");
 
 function* mockRandom() {
   for (const n of [0, 1]) yield n;

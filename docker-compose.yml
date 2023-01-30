@@ -1,23 +1,22 @@
 services:
   redis:
     restart: always
-    image: redis
+    image: redis:alpine
     command: redis-server --save 20 1 --loglevel warning
     ports:
-      - 6379
+      - 6379:6379
     volumes:
-      - ./redis/data:/data
-      - ./redis/config:/usr/local/etc/redis
-  nodejs:
+      - ./db/redis/data:/data
+      - ./db/redis/config:/usr/local/etc/redis
+    environment:
+      - HOST_HOSTNAME=redis
+  bot:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nodejs
-    container_name: nodejs
     restart: unless-stopped
     environment:
       - BOT_TOKEN=$BOT_TOKEN
       - CLIENT_ID=$CLIENT_ID
-      - GUILD_ID_SALESOFT=$GUILD_ID_SALESOFT
       - REDIS_URL=$REDIS_URL
       - TZ=$TZ

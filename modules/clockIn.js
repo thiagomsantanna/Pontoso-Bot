@@ -1,7 +1,8 @@
 const redis = require("../db/redis");
 
-async function setClockIn(userId, timestamp, clockInObj) {
-  const keyContent = JSON.stringify({ timestamp, clockIn: clockInObj });
+async function setClockIn(user, timestamp, clockInObj) {
+  const { id: userId, username } = user;
+  const keyContent = JSON.stringify({ username, timestamp, clockIn: clockInObj });
 
   await redis
     .set(`ponto:${userId}`, keyContent, { EX: 72000 })
@@ -42,7 +43,7 @@ async function clockIn(commandMsgObj, dateTime) {
   });
   await addReactions(clockInObj);
 
-  await setClockIn(user.id, createdTimestamp, clockInObj.content);
+  await setClockIn(user, createdTimestamp, clockInObj.content);
 
   return clockInObj;
 }

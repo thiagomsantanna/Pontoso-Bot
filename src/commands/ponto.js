@@ -31,7 +31,7 @@ module.exports = {
       // also checks if schedules from the punched clock is older than today
       if (todaysDay > clockInDay) {
         const { id } = await clockIn(interaction, clockInSchedule);
-        console.log(id);
+        console.log(`[${id}] ⏰ Renewed his clock: ${userClockIn.username}`);
 
         return;
       }
@@ -40,6 +40,6 @@ module.exports = {
     }
 
     const { id } = await clockIn(interaction, clockInSchedule);
-    console.log(id);
+    console.log(`[${id}] ⏰ ${user.username} punched the clock`);
   },
 };

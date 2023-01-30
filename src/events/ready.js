@@ -2,6 +2,6 @@ module.exports = {
   name: "ready",
   once: true,
   execute() {
-    console.log("Pronto!");
+    console.log("🤖 The bot is running!");
   },
 };

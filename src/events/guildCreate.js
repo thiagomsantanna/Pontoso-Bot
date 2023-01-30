@@ -6,7 +6,7 @@ const commands = require("../commands");
 const rest = new REST({ version: "9" }).setToken(process.env.BOT_TOKEN);
 
 const welcomeMessage = {
-  title: "Obrigado por convidar o Pontoso ao seu servidor!",
+  title: `Obrigado por convidar o ${process.env.BOT_NAME ?? "Pontoso"} ao seu servidor!`,
   color: 9515056,
   description:
     "\n\nRecomendamos o uso do bot em um canal separado assim como esse para evitar de poluir outros canais e facilitar o uso, porém, os comandos funcionarão em todos os canais sem problemas, sinta-se à vontade de usar a sua maneira!\n\n\nOs comandos para uso são:\n\n   `/ponto` - Para iniciar o ponto e utilize os emojis abaixo do Ponto para marcar os momentos de intervalo e saída do expediente. Também é possível passar um horário específico de ínicio do ponto utilizando a opção de `horário` junto do `/ponto`.\n\n`/esquecidoalmoco` - Para caso esqueça de marcar o horário de Intervalo na hora exata e necessite passar um horário específico. Utilize a opção de `horário` para passar a hora.",
@@ -42,6 +42,6 @@ module.exports = {
 
     await rest.put(route, payload).catch(console.error);
 
-    console.log(`Successfully deployed commands to: ${guild.name}`);
+    console.log(`✅ Successfully deployed commands to: ${guild.name}`);
   },
 };

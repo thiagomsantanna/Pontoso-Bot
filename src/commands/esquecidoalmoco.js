@@ -59,7 +59,7 @@ async function getLastUserClockIn(interaction, userId) {
 
   const pontoMessages = await pontoChannel.messages.fetch();
   const clockIns = pontoMessages.filter(
-    ({ author }) => author.username === "Pontoso",
+    ({ author }) => author.username === (process.env.BOT_NAME ?? "Pontoso"),
   );
 
   return clockIns.find((msg) => msg.content.includes(`<@${userId}>`));

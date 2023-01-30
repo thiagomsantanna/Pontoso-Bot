@@ -15,11 +15,11 @@ async function getClockIn(userId) {
 }
 
 async function updateClockIn(userId, updatedClockIn) {
-  const { timestamp } = await getClockIn(userId);
+  const actualKey = await getClockIn(userId);
   const keyTTL = await redis.ttl(`ponto:${userId}`);
 
   const updatedClockInKey = JSON.stringify({
-    timestamp,
+    ...actualKey,
     clockIn: updatedClockIn,
   });
 

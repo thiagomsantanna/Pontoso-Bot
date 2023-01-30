@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "node .",
-    "dev": "redis-cli flushall && NODE_ENV=dev node ."
+    "dev": "redis-cli flushall && NODE_ENV=dev node .",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
